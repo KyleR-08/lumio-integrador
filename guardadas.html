@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardadas · Lumio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="galeria.html">lumio<span class="brand__dot">•</span></a>
+        <nav>
+            <ul class="nav">
+                <li><a class="nav__link" href="galeria.html">Explorar</a></li>
+                <li><a class="nav__link" href="registro.html">Registrar</a></li>
+                <li data-solo-admin><a class="nav__link" href="usuarios.html">Usuarios</a></li>
+            </ul>
+        </nav>
+        <a class="avatar" href="perfil.html" aria-label="Mi perfil">KR</a>
+    </header>
+
+    <main class="page">
+        <section class="profile">
+            <span class="avatar avatar--lg">KR</span>
+            <div>
+                <h1>Kyle Reinoso</h1>
+                <p><span class="dorado">Administrador</span> · <span class="status status--ok">Activo</span></p>
+                <p>kyle.reinoso@lumio.app</p>
+                <p>Administra las identidades y los permisos de Lumio.</p>
+                <a class="btn btn--gold" href="index.html">Cerrar sesión</a>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stat"><strong>02</strong> Publicaciones</div>
+            <div class="stat"><strong>03</strong> Tableros</div>
+            <div class="stat"><strong>03</strong> Guardadas</div>
+        </section>
+
+        <nav class="tabs">
+            <a class="nav__link" href="perfil.html">Publicaciones</a>
+            <a class="nav__link nav__link--active" href="guardadas.html">Guardadas</a>
+        </nav>
+
+        <ul class="gallery">
+            <li>
+                <a class="card" href="detalle.html">
+                    <div class="card__img card__img--cafe"></div>
+                    <h3 class="card__title">Warm interior</h3>
+                    <p class="card__meta">Hogar · Ariel Esparza</p>
+                </a>
+            </li>
+            <li>
+                <a class="card" href="detalle.html">
+                    <div class="card__img card__img--piedra"></div>
+                    <h3 class="card__title">Stone path</h3>
+                    <p class="card__meta">Viajes · Alejandro Z.</p>
+                </a>
+            </li>
+            <li>
+                <a class="card" href="detalle.html">
+                    <div class="card__img card__img--negro"></div>
+                    <h3 class="card__title">Gallery wall</h3>
+                    <p class="card__meta">Arte · Ariel Esparza</p>
+                </a>
+            </li>
+        </ul>
+    </main>
+
+    <nav class="dock">
+        <ul>
+        <li><a class="dock__link" href="galeria.html" aria-label="Explorar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+        </a></li>
+        <li><a class="dock__link" href="registro.html" aria-label="Registrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg>
+        </a></li>
+        <li data-solo-admin><a class="dock__link" href="usuarios.html" aria-label="Usuarios">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.8 0 5 2.2 5 5"/></svg>
+        </a></li>
+        <li><a class="dock__link dock__link--active" href="perfil.html" aria-label="Perfil">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </a></li>
+        </ul>
+    </nav>
+</body>
+</html>
