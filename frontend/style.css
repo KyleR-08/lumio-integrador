@@ -541,3 +541,24 @@ tbody tr:hover {
         font-size: 3rem;
     }
 }
+
+img.card__img {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+    background: var(--linea);
+}
+
+.page .card-form {
+    margin: 1.5rem 0;
+}
+
+td .btn {
+    margin-top: 0;
+    padding: 0.4rem 0.8rem;
+}
+
+#mensaje {
+    font-weight: 700;
+    color: #b3472f;
+}

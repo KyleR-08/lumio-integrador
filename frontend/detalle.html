@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de imagen · Lumio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="galeria.html">lumio<span class="brand__dot">•</span></a>
+        <nav>
+            <ul class="nav">
+                <li><a class="nav__link nav__link--active" href="galeria.html">Explorar</a></li>
+                <li><a class="nav__link" href="registro.html">Registrar</a></li>
+                <li data-solo-admin><a class="nav__link" href="usuarios.html">Usuarios</a></li>
+            </ul>
+        </nav>
+        <a class="avatar" href="perfil.html" aria-label="Mi perfil">KR</a>
+    </header>
+
+    <main class="page">
+        <article class="detail">
+            <img class="detail__img card__img" id="imagen" alt="">
+
+            <div>
+                <p class="meta" id="meta"></p>
+                <h1 id="titulo"></h1>
+                <p id="descripcion"></p>
+
+                <a class="author" href="perfil.html">
+                    <span class="avatar" id="iniciales"></span>
+                    <span>
+                        <strong id="autor"></strong><br>
+                        <span class="meta" id="fecha"></span>
+                    </span>
+                </a>
+
+                <a class="btn btn--outline" href="guardadas.html">Guardar</a>
+                <a class="btn btn--gold" id="descargar" target="_blank">Descargar</a>
+                <button class="btn btn--outline" id="eliminar" type="button">Eliminar</button>
+            </div>
+        </article>
+        <p id="mensaje"></p>
+    </main>
+
+    <nav class="dock">
+        <ul>
+        <li><a class="dock__link dock__link--active" href="galeria.html" aria-label="Explorar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+        </a></li>
+        <li><a class="dock__link" href="registro.html" aria-label="Registrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg>
+        </a></li>
+        <li data-solo-admin><a class="dock__link" href="usuarios.html" aria-label="Usuarios">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.8 0 5 2.2 5 5"/></svg>
+        </a></li>
+        <li><a class="dock__link" href="perfil.html" aria-label="Perfil">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </a></li>
+        </ul>
+    </nav>
+    <script>
+        const id = new URLSearchParams(window.location.search).get("id");
+        const mensaje = document.getElementById("mensaje");
+
+        fetch(API + "/api/imagenes/" + id)
+            .then((respuesta) => respuesta.json())
+            .then((imagen) => {
+                if (imagen.detail) {
+                    mensaje.textContent = "Imagen no encontrada";
+                    return;
+                }
+                const fecha = new Date(imagen.fecha_registro).toLocaleDateString("es-EC", { day: "numeric", month: "long", year: "numeric" });
+                document.getElementById("imagen").src = API + imagen.url;
+                document.getElementById("imagen").alt = imagen.titulo;
+                document.getElementById("meta").textContent = imagen.categoria_nombre + " · Imagen #" + imagen.id;
+                document.getElementById("titulo").textContent = imagen.titulo;
+                document.getElementById("descripcion").textContent = imagen.descripcion;
+                document.getElementById("iniciales").textContent = iniciales(imagen.usuario_nombre);
+                document.getElementById("autor").textContent = imagen.usuario_nombre;
+                document.getElementById("fecha").textContent = "Responsable · " + fecha;
+                document.getElementById("descargar").href = API + imagen.url;
+
+                const eliminar = document.getElementById("eliminar");
+                if (!ES_ADMIN && usuario.id !== imagen.usuario_id) {
+                    eliminar.style.display = "none";
+                }
+                eliminar.addEventListener("click", () => {
+                    fetch(API + "/api/imagenes/" + id, { method: "DELETE" })
+                        .then(() => {
+                            window.location.href = "galeria.html";
+                        });
+                });
+            });
+    </script>
+</body>
+</html>

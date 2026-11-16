@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" data-publica>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingresar · Lumio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
+</head>
+<body>
+    <main class="login">
+        <section class="login__intro">
+            <a class="brand brand--light" href="index.html">lumio<span class="brand__dot">•</span></a>
+            <h1>Imágenes que encuentran <span class="dorado">su lugar.</span></h1>
+            <p>Galería cloud segura para descubrir, publicar y organizar ideas.</p>
+        </section>
+
+        <section class="login__panel">
+            <form class="card-form" id="formulario">
+                <h2>Bienvenido</h2>
+                <label for="correo">Correo</label>
+                <input id="correo" type="email" placeholder="nombre@lumio.app" required>
+
+                <label for="clave">Contraseña</label>
+                <input id="clave" type="password" placeholder="••••••••" required>
+
+                <button class="btn btn--dark" type="submit">Ingresar a Lumio</button>
+                <p id="mensaje"></p>
+                <a class="link" href="#">¿Olvidaste tu contraseña?</a>
+            </form>
+        </section>
+    </main>
+    <script>
+        const formulario = document.getElementById("formulario");
+        const mensaje = document.getElementById("mensaje");
+
+        formulario.addEventListener("submit", (evento) => {
+            evento.preventDefault();
+            const datos = {
+                correo: document.getElementById("correo").value,
+                contrasena: document.getElementById("clave").value
+            };
+            fetch(API + "/api/usuarios/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datos)
+            })
+                .then((respuesta) => respuesta.json())
+                .then((resultado) => {
+                    if (resultado.detail) {
+                        mensaje.textContent = resultado.detail;
+                    } else {
+                        localStorage.setItem("usuario", JSON.stringify(resultado));
+                        window.location.href = "galeria.html";
+                    }
+                });
+        });
+    </script>
+</body>
+</html>

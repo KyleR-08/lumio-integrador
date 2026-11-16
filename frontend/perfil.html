@@ -23,20 +23,17 @@
 
     <main class="page">
         <section class="profile">
-            <span class="avatar avatar--lg">KR</span>
+            <span class="avatar avatar--lg" id="iniciales"></span>
             <div>
-                <h1>Kyle Reinoso</h1>
-                <p><span class="dorado">Administrador</span> · <span class="status status--ok">Activo</span></p>
-                <p>kyle.reinoso@lumio.app</p>
-                <p>Administra las identidades y los permisos de Lumio.</p>
-                <a class="btn btn--gold" href="index.html">Cerrar sesión</a>
+                <h1 id="nombre"></h1>
+                <p><span class="dorado" id="rol"></span> · <span class="status status--ok" id="estado"></span></p>
+                <p id="correo"></p>
+                <a class="btn btn--gold" id="salir" href="index.html">Cerrar sesión</a>
             </div>
         </section>
 
         <section class="stats">
-            <div class="stat"><strong>02</strong> Publicaciones</div>
-            <div class="stat"><strong>03</strong> Tableros</div>
-            <div class="stat"><strong>03</strong> Guardadas</div>
+            <div class="stat"><strong id="publicaciones">0</strong> Publicaciones</div>
         </section>
 
         <nav class="tabs">
@@ -44,22 +41,7 @@
             <a class="nav__link" href="guardadas.html">Guardadas</a>
         </nav>
 
-        <ul class="gallery">
-            <li>
-                <a class="card" href="detalle.html">
-                    <div class="card__img card__img--negro"></div>
-                    <h3 class="card__title">Quiet workspace</h3>
-                    <p class="card__meta">Arquitectura · Kyle Reinoso</p>
-                </a>
-            </li>
-            <li>
-                <a class="card" href="detalle.html">
-                    <div class="card__img card__img--azul"></div>
-                    <h3 class="card__title">Blue hour</h3>
-                    <p class="card__meta">Viajes · Kyle Reinoso</p>
-                </a>
-            </li>
-        </ul>
+        <ul class="gallery" id="galeria"></ul>
     </main>
 
     <nav class="dock">
@@ -78,5 +60,26 @@
         </a></li>
         </ul>
     </nav>
+    <script>
+        document.getElementById("iniciales").textContent = iniciales(usuario.nombre);
+        document.getElementById("nombre").textContent = usuario.nombre;
+        document.getElementById("rol").textContent = usuario.rol;
+        document.getElementById("estado").textContent = usuario.estado;
+        document.getElementById("correo").textContent = usuario.correo;
+
+        document.getElementById("salir").addEventListener("click", () => {
+            localStorage.removeItem("usuario");
+        });
+
+        fetch(API + "/api/imagenes/?usuario_id=" + usuario.id)
+            .then((respuesta) => respuesta.json())
+            .then((imagenes) => {
+                const galeria = document.getElementById("galeria");
+                document.getElementById("publicaciones").textContent = imagenes.length;
+                imagenes.forEach((imagen) => {
+                    galeria.appendChild(crearTarjeta(imagen));
+                });
+            });
+    </script>
 </body>
 </html>

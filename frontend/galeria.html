@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería · Lumio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="galeria.html">lumio<span class="brand__dot">•</span></a>
+        <nav>
+            <ul class="nav">
+                <li><a class="nav__link nav__link--active" href="galeria.html">Explorar</a></li>
+                <li><a class="nav__link" href="registro.html">Registrar</a></li>
+                <li data-solo-admin><a class="nav__link" href="usuarios.html">Usuarios</a></li>
+            </ul>
+        </nav>
+        <a class="avatar" href="perfil.html" aria-label="Mi perfil">KR</a>
+    </header>
+
+    <main class="page">
+        <h1>Descubre lo visual</h1>
+        <p class="subtitle">Colección curada de la comunidad Lumio.</p>
+
+        <form id="formulario-busqueda">
+            <input id="buscador" type="search" placeholder="Buscar imágenes" aria-label="Buscar imágenes">
+        </form>
+
+        <ul class="chips" id="categorias"></ul>
+
+        <ul class="gallery" id="galeria"></ul>
+    </main>
+
+    <nav class="dock">
+        <ul>
+        <li><a class="dock__link dock__link--active" href="galeria.html" aria-label="Explorar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+        </a></li>
+        <li><a class="dock__link" href="registro.html" aria-label="Registrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg>
+        </a></li>
+        <li data-solo-admin><a class="dock__link" href="usuarios.html" aria-label="Usuarios">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.8 0 5 2.2 5 5"/></svg>
+        </a></li>
+        <li><a class="dock__link" href="perfil.html" aria-label="Perfil">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </a></li>
+        </ul>
+    </nav>
+    <script>
+        const galeria = document.getElementById("galeria");
+        const categorias = document.getElementById("categorias");
+        const buscador = document.getElementById("buscador");
+        let categoriaActual = "";
+
+        function cargarImagenes() {
+            let url = API + "/api/imagenes/?buscar=" + encodeURIComponent(buscador.value);
+            if (categoriaActual) {
+                url = url + "&categoria_id=" + categoriaActual;
+            }
+            fetch(url)
+                .then((respuesta) => respuesta.json())
+                .then((imagenes) => {
+                    galeria.textContent = "";
+                    imagenes.forEach((imagen) => {
+                        galeria.appendChild(crearTarjeta(imagen));
+                    });
+                });
+        }
+
+        function crearChip(texto, id) {
+            const item = document.createElement("li");
+            const boton = document.createElement("button");
+            boton.className = "chip";
+            boton.type = "button";
+            boton.textContent = texto;
+            if (id === "") {
+                boton.classList.add("chip--active");
+            }
+            boton.addEventListener("click", () => {
+                document.querySelector(".chip--active").classList.remove("chip--active");
+                boton.classList.add("chip--active");
+                categoriaActual = id;
+                cargarImagenes();
+            });
+            item.appendChild(boton);
+            return item;
+        }
+
+        document.getElementById("formulario-busqueda").addEventListener("submit", (evento) => {
+            evento.preventDefault();
+            cargarImagenes();
+        });
+
+        categorias.appendChild(crearChip("Todo", ""));
+        fetch(API + "/api/categorias/")
+            .then((respuesta) => respuesta.json())
+            .then((lista) => {
+                lista.forEach((categoria) => {
+                    categorias.appendChild(crearChip(categoria.nombre, categoria.id));
+                });
+            });
+
+        cargarImagenes();
+    </script>
+</body>
+</html>

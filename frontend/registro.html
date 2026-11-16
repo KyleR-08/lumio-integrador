@@ -25,27 +25,24 @@
         <h1>Registrar imagen</h1>
         <p class="subtitle">Añade una nueva publicación a la galería.</p>
 
-        <form action="galeria.html">
+        <form id="formulario">
             <label for="imagen">Imagen (JPG, PNG o WEBP · máximo 10 MB)</label>
-            <input id="imagen" type="file" accept="image/jpeg,image/png,image/webp">
+            <input id="imagen" name="archivo" type="file" accept="image/jpeg,image/png,image/webp" required>
 
             <label for="titulo">Título o nombre</label>
-            <input id="titulo" type="text" placeholder="Ej. Quiet workspace">
+            <input id="titulo" name="titulo" type="text" placeholder="Ej. Quiet workspace" required>
 
             <label for="categoria">Categoría</label>
-            <select id="categoria">
+            <select id="categoria" name="categoria_id" required>
                 <option value="" selected disabled>Seleccionar categoría</option>
-                <option>Arte</option>
-                <option>Hogar</option>
-                <option>Viajes</option>
-                <option>Arquitectura</option>
             </select>
 
             <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" rows="4"></textarea>
+            <textarea id="descripcion" name="descripcion" rows="4"></textarea>
 
             <button class="btn btn--gold" type="submit">Registrar imagen</button>
         </form>
+        <p id="mensaje"></p>
     </main>
 
     <nav class="dock">
@@ -64,5 +61,37 @@
         </a></li>
         </ul>
     </nav>
+    <script>
+        const formulario = document.getElementById("formulario");
+        const select = document.getElementById("categoria");
+        const mensaje = document.getElementById("mensaje");
+
+        fetch(API + "/api/categorias/")
+            .then((respuesta) => respuesta.json())
+            .then((categorias) => {
+                categorias.forEach((categoria) => {
+                    const opcion = document.createElement("option");
+                    opcion.value = categoria.id;
+                    opcion.textContent = categoria.nombre;
+                    select.appendChild(opcion);
+                });
+            });
+
+        formulario.addEventListener("submit", (evento) => {
+            evento.preventDefault();
+            const datos = new FormData(formulario);
+            datos.append("usuario_id", usuario.id);
+            fetch(API + "/api/imagenes/", { method: "POST", body: datos })
+                .then((respuesta) => {
+                    if (respuesta.ok) {
+                        window.location.href = "galeria.html";
+                    } else {
+                        respuesta.json().then((error) => {
+                            mensaje.textContent = error.detail;
+                        });
+                    }
+                });
+        });
+    </script>
 </body>
 </html>

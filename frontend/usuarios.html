@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es" data-requiere-admin>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios · Lumio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
+</head>
+<body>
+    <header class="header">
+        <a class="brand" href="galeria.html">lumio<span class="brand__dot">•</span></a>
+        <nav>
+            <ul class="nav">
+                <li><a class="nav__link" href="galeria.html">Explorar</a></li>
+                <li><a class="nav__link" href="registro.html">Registrar</a></li>
+                <li data-solo-admin><a class="nav__link nav__link--active" href="usuarios.html">Usuarios</a></li>
+            </ul>
+        </nav>
+        <a class="avatar" href="perfil.html" aria-label="Mi perfil">KR</a>
+    </header>
+
+    <main class="page">
+        <h1>Usuarios y permisos</h1>
+        <p class="subtitle">Controla el acceso a la galería segura.</p>
+
+        <section class="stats">
+            <div class="stat"><strong id="activos">0</strong> Activos</div>
+            <div class="stat"><strong id="admins">0</strong> Admins</div>
+            <div class="stat"><strong id="pendientes">0</strong> Pendientes</div>
+        </section>
+
+        <form class="card-form" id="formulario-usuario">
+            <h2>Registrar usuario</h2>
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" required>
+
+            <label for="correo">Correo</label>
+            <input id="correo" type="email" placeholder="nombre@lumio.app" required>
+
+            <label for="contrasena">Contraseña</label>
+            <input id="contrasena" type="password" required>
+
+            <label for="rol">Rol</label>
+            <select id="rol">
+                <option>Usuario</option>
+                <option>Editor</option>
+                <option>Auditoría</option>
+                <option>Administrador</option>
+            </select>
+
+            <label for="estado">Estado</label>
+            <select id="estado">
+                <option>Activo</option>
+                <option>Pendiente</option>
+                <option>Requiere revisión</option>
+            </select>
+
+            <button class="btn btn--gold" type="submit">Registrar usuario</button>
+        </form>
+
+        <p id="mensaje"></p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tabla-usuarios"></tbody>
+        </table>
+
+        <h2>Categorías</h2>
+
+        <form class="card-form" id="formulario-categoria">
+            <label for="nombre-categoria">Nombre</label>
+            <input id="nombre-categoria" type="text" required>
+
+            <label for="descripcion-categoria">Descripción</label>
+            <input id="descripcion-categoria" type="text">
+
+            <button class="btn btn--gold" type="submit">Registrar categoría</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tabla-categorias"></tbody>
+        </table>
+    </main>
+
+    <nav class="dock">
+        <ul>
+        <li><a class="dock__link" href="galeria.html" aria-label="Explorar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+        </a></li>
+        <li><a class="dock__link" href="registro.html" aria-label="Registrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg>
+        </a></li>
+        <li data-solo-admin><a class="dock__link dock__link--active" href="usuarios.html" aria-label="Usuarios">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.8 0 5 2.2 5 5"/></svg>
+        </a></li>
+        <li><a class="dock__link" href="perfil.html" aria-label="Perfil">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </a></li>
+        </ul>
+    </nav>
+    <script>
+        const tablaUsuarios = document.getElementById("tabla-usuarios");
+        const tablaCategorias = document.getElementById("tabla-categorias");
+        const mensaje = document.getElementById("mensaje");
+
+        function crearBotonEliminar(url, recargar) {
+            const boton = document.createElement("button");
+            boton.className = "btn btn--outline";
+            boton.type = "button";
+            boton.textContent = "Eliminar";
+            boton.addEventListener("click", () => {
+                fetch(API + url, { method: "DELETE" })
+                    .then((respuesta) => {
+                        if (respuesta.ok) {
+                            mensaje.textContent = "";
+                            recargar();
+                        } else {
+                            respuesta.json().then((error) => {
+                                mensaje.textContent = error.detail;
+                            });
+                        }
+                    });
+            });
+            return boton;
+        }
+
+        function crearFilaUsuario(persona) {
+            const fila = document.createElement("tr");
+            const celdaUsuario = document.createElement("td");
+            const celdaRol = document.createElement("td");
+            const celdaEstado = document.createElement("td");
+            const celdaAccion = document.createElement("td");
+            const contenedor = document.createElement("div");
+            const avatar = document.createElement("span");
+            const datos = document.createElement("span");
+            const nombre = document.createElement("strong");
+            const correo = document.createElement("span");
+            const estado = document.createElement("span");
+
+            contenedor.className = "user";
+            avatar.className = "avatar avatar--sm";
+            avatar.textContent = iniciales(persona.nombre);
+            nombre.textContent = persona.nombre;
+            correo.className = "meta";
+            correo.textContent = persona.correo;
+            datos.appendChild(nombre);
+            datos.appendChild(document.createElement("br"));
+            datos.appendChild(correo);
+            contenedor.appendChild(avatar);
+            contenedor.appendChild(datos);
+            celdaUsuario.appendChild(contenedor);
+
+            celdaRol.textContent = persona.rol;
+
+            estado.className = "status";
+            if (persona.estado === "Activo") {
+                estado.classList.add("status--ok");
+            } else if (persona.estado === "Pendiente") {
+                estado.classList.add("status--pending");
+            } else {
+                estado.classList.add("status--review");
+            }
+            estado.textContent = persona.estado;
+            celdaEstado.appendChild(estado);
+
+            celdaAccion.appendChild(crearBotonEliminar("/api/usuarios/" + persona.id, cargarUsuarios));
+
+            fila.appendChild(celdaUsuario);
+            fila.appendChild(celdaRol);
+            fila.appendChild(celdaEstado);
+            fila.appendChild(celdaAccion);
+            return fila;
+        }
+
+        function cargarUsuarios() {
+            fetch(API + "/api/usuarios/")
+                .then((respuesta) => respuesta.json())
+                .then((personas) => {
+                    tablaUsuarios.textContent = "";
+                    let activos = 0;
+                    let admins = 0;
+                    let pendientes = 0;
+                    personas.forEach((persona) => {
+                        tablaUsuarios.appendChild(crearFilaUsuario(persona));
+                        if (persona.estado === "Activo") {
+                            activos = activos + 1;
+                        }
+                        if (persona.rol === "Administrador") {
+                            admins = admins + 1;
+                        }
+                        if (persona.estado === "Pendiente") {
+                            pendientes = pendientes + 1;
+                        }
+                    });
+                    document.getElementById("activos").textContent = activos;
+                    document.getElementById("admins").textContent = admins;
+                    document.getElementById("pendientes").textContent = pendientes;
+                });
+        }
+
+        function cargarCategorias() {
+            fetch(API + "/api/categorias/")
+                .then((respuesta) => respuesta.json())
+                .then((categorias) => {
+                    tablaCategorias.textContent = "";
+                    categorias.forEach((categoria) => {
+                        const fila = document.createElement("tr");
+                        const celdaNombre = document.createElement("td");
+                        const celdaDescripcion = document.createElement("td");
+                        const celdaAccion = document.createElement("td");
+                        celdaNombre.textContent = categoria.nombre;
+                        celdaDescripcion.textContent = categoria.descripcion;
+                        celdaAccion.appendChild(crearBotonEliminar("/api/categorias/" + categoria.id, cargarCategorias));
+                        fila.appendChild(celdaNombre);
+                        fila.appendChild(celdaDescripcion);
+                        fila.appendChild(celdaAccion);
+                        tablaCategorias.appendChild(fila);
+                    });
+                });
+        }
+
+        document.getElementById("formulario-usuario").addEventListener("submit", (evento) => {
+            evento.preventDefault();
+            const datos = {
+                nombre: document.getElementById("nombre").value,
+                correo: document.getElementById("correo").value,
+                contrasena: document.getElementById("contrasena").value,
+                rol: document.getElementById("rol").value,
+                estado: document.getElementById("estado").value
+            };
+            fetch(API + "/api/usuarios/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datos)
+            })
+                .then((respuesta) => {
+                    if (respuesta.ok) {
+                        mensaje.textContent = "";
+                        evento.target.reset();
+                        cargarUsuarios();
+                    } else {
+                        respuesta.json().then((error) => {
+                            mensaje.textContent = error.detail;
+                        });
+                    }
+                });
+        });
+
+        document.getElementById("formulario-categoria").addEventListener("submit", (evento) => {
+            evento.preventDefault();
+            const datos = {
+                nombre: document.getElementById("nombre-categoria").value,
+                descripcion: document.getElementById("descripcion-categoria").value
+            };
+            fetch(API + "/api/categorias/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datos)
+            })
+                .then(() => {
+                    evento.target.reset();
+                    cargarCategorias();
+                });
+        });
+
+        cargarUsuarios();
+        cargarCategorias();
+    </script>
+</body>
+</html>
