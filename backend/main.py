@@ -5,7 +5,7 @@ from db import create_db
 from storage import CARPETA
 from routers import usuarios,imagenes,categorias
 
-URL_S3="http://CAMBIAR-NOMBRE-BUCKET.s3-website-us-east-1.amazonaws.com"
+URL_S3 = "http://lumio-galeria-uide.s3-website-us-east-1.amazonaws.com"
 
 app=FastAPI(
     title="Lumio API",
