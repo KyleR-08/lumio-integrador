@@ -19,7 +19,7 @@ def armar(imagen:Imagen):
         usuario_id=imagen.usuario_id,
         categoria_nombre=imagen.categoria.nombre,
         usuario_nombre=imagen.usuario.nombre,
-        url="/uploads/"+imagen.nombre_archivo
+        url=imagen.url
     )
 
 @router.get("/",response_model=list[ImagenLeer])
@@ -47,8 +47,8 @@ def create_imagen(archivo:UploadFile=File(...),titulo:str=Form(...),descripcion:
         raise HTTPException(status_code=404,detail="Categoría no encontrada")
     if not session.get(Usuario,usuario_id):
         raise HTTPException(status_code=404,detail="Usuario no encontrado")
-    nombre_archivo=guardar_archivo(archivo)
-    imagen=Imagen(titulo=titulo,nombre_archivo=nombre_archivo,descripcion=descripcion,categoria_id=categoria_id,usuario_id=usuario_id)
+    nombre_archivo,url=guardar_archivo(archivo)
+    imagen=Imagen(titulo=titulo,nombre_archivo=nombre_archivo,url=url,descripcion=descripcion,categoria_id=categoria_id,usuario_id=usuario_id)
     session.add(imagen)
     session.commit()
     session.refresh(imagen)

@@ -8,6 +8,11 @@ class UsuarioCrear(SQLModel):
     rol:str="Usuario"
     estado:str="Activo"
 
+class UsuarioRegistro(SQLModel):
+    nombre:str
+    correo:str
+    contrasena:str
+
 class UsuarioActualizar(SQLModel):
     nombre:Optional[str]=None
     correo:Optional[str]=None

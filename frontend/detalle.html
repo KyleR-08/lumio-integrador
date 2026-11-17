@@ -74,7 +74,7 @@
                     return;
                 }
                 const fecha = new Date(imagen.fecha_registro).toLocaleDateString("es-EC", { day: "numeric", month: "long", year: "numeric" });
-                document.getElementById("imagen").src = API + imagen.url;
+                document.getElementById("imagen").src = imagen.url;
                 document.getElementById("imagen").alt = imagen.titulo;
                 document.getElementById("meta").textContent = imagen.categoria_nombre + " · Imagen #" + imagen.id;
                 document.getElementById("titulo").textContent = imagen.titulo;
@@ -82,7 +82,7 @@
                 document.getElementById("iniciales").textContent = iniciales(imagen.usuario_nombre);
                 document.getElementById("autor").textContent = imagen.usuario_nombre;
                 document.getElementById("fecha").textContent = "Responsable · " + fecha;
-                document.getElementById("descargar").href = API + imagen.url;
+                document.getElementById("descargar").href = imagen.url;
 
                 const eliminar = document.getElementById("eliminar");
                 if (!ES_ADMIN && usuario.id !== imagen.usuario_id) {

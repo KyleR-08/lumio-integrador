@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es" data-publica>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta · Lumio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
+</head>
+<body>
+    <main class="login">
+        <section class="login__intro">
+            <a class="brand brand--light" href="index.html">lumio<span class="brand__dot">•</span></a>
+            <h1>Imágenes que encuentran <span class="dorado">su lugar.</span></h1>
+            <p>Galería cloud segura para descubrir, publicar y organizar ideas.</p>
+        </section>
+
+        <section class="login__panel">
+            <form class="card-form" id="formulario">
+                <h2>Crear cuenta</h2>
+                <label for="nombre">Nombre</label>
+                <input id="nombre" type="text" placeholder="Tu nombre" required>
+
+                <label for="correo">Correo</label>
+                <input id="correo" type="email" placeholder="nombre@lumio.app" required>
+
+                <label for="clave">Contraseña</label>
+                <input id="clave" type="password" placeholder="••••••••" required>
+
+                <button class="btn btn--dark" type="submit">Crear cuenta</button>
+                <p id="mensaje"></p>
+                <a class="link" href="index.html">¿Ya tienes cuenta? Ingresar</a>
+            </form>
+        </section>
+    </main>
+    <script>
+        const formulario = document.getElementById("formulario");
+        const mensaje = document.getElementById("mensaje");
+
+        formulario.addEventListener("submit", (evento) => {
+            evento.preventDefault();
+            const datos = {
+                nombre: document.getElementById("nombre").value,
+                correo: document.getElementById("correo").value,
+                contrasena: document.getElementById("clave").value
+            };
+            fetch(API + "/api/usuarios/registro", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datos)
+            })
+                .then((respuesta) => respuesta.json())
+                .then((resultado) => {
+                    if (resultado.detail) {
+                        mensaje.textContent = resultado.detail;
+                    } else {
+                        window.location.href = "index.html";
+                    }
+                })
+                .catch(() => {
+                    mensaje.textContent = "No se pudo conectar con la API";
+                });
+        });
+    </script>
+</body>
+</html>

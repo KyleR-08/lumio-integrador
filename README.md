@@ -15,7 +15,7 @@ El frontend (HTML, CSS y JavaScript) se publica en Amazon S3. El backend (FastAP
 - backend/schemas/: datos que recibe y devuelve la API
 - backend/routers/: endpoints de imagenes, usuarios y categorias
 - backend/auth.py: login y encriptado de contraseñas
-- backend/storage.py: guardar y borrar las imágenes en la carpeta uploads
+- backend/storage.py: subir y borrar las imágenes en el bucket de S3 lumio-imagenes-uide
 
 ## Cómo correr el backend
 
@@ -105,3 +105,11 @@ El endpoint de S3 es http (no https), igual que el backend local. Si Chrome mues
 
 - guardadas.html se mantiene como en el Avance 2 (diseño estático): el Avance 3 no incluye guardar imágenes.
 - Las contraseñas se guardan con SHA-256. Para un proyecto real convendría usar bcrypt.
+
+## Bucket de imágenes (segundo bucket de S3)
+
+Las fotos no se guardan en el servidor. El backend las sube a un segundo bucket (`lumio-imagenes-uide`) y la base de datos guarda el link completo en la columna `url` de la tabla Imagen. El frontend muestra la foto directamente desde ese link.
+
+1. Copiar `backend/.env.example` a `backend/.env` y completar `AWS_ACCESS_KEY_ID` y `AWS_SECRET_ACCESS_KEY` de un usuario IAM que solo tenga permiso `s3:PutObject` y `s3:DeleteObject` sobre `lumio-imagenes-uide/*`.
+2. El archivo `.env` está en `.gitignore`: las claves no se suben a GitHub.
+3. Instalar dependencias con `pip install -r requirements.txt` (incluye `boto3` y `python-dotenv`).

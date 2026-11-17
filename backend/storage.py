@@ -1,12 +1,18 @@
 import os
 import uuid
+import boto3
+from botocore.exceptions import BotoCoreError,ClientError
+from dotenv import load_dotenv
 from fastapi import HTTPException,UploadFile
 
-CARPETA=os.path.join(os.path.dirname(__file__),"uploads")
+load_dotenv()
+
+BUCKET=os.getenv("S3_BUCKET","lumio-imagenes-uide")
+REGION=os.getenv("AWS_REGION","us-east-1")
 TIPOS={"image/jpeg":".jpg","image/png":".png","image/webp":".webp"}
 MAXIMO=10*1024*1024
 
-os.makedirs(CARPETA,exist_ok=True)
+s3=boto3.client("s3",region_name=REGION)
 
 def guardar_archivo(archivo:UploadFile):
     if archivo.content_type not in TIPOS:
@@ -15,11 +21,15 @@ def guardar_archivo(archivo:UploadFile):
     if len(contenido)>MAXIMO:
         raise HTTPException(status_code=400,detail="La imagen supera los 10 MB")
     nombre=uuid.uuid4().hex+TIPOS[archivo.content_type]
-    with open(os.path.join(CARPETA,nombre),"wb") as destino:
-        destino.write(contenido)
-    return nombre
+    try:
+        s3.put_object(Bucket=BUCKET,Key=nombre,Body=contenido,ContentType=archivo.content_type)
+    except (BotoCoreError,ClientError):
+        raise HTTPException(status_code=502,detail="No se pudo subir la imagen al bucket de S3")
+    url="https://"+BUCKET+".s3."+REGION+".amazonaws.com/"+nombre
+    return nombre,url
 
 def borrar_archivo(nombre:str):
-    ruta=os.path.join(CARPETA,nombre)
-    if os.path.exists(ruta):
-        os.remove(ruta)
+    try:
+        s3.delete_object(Bucket=BUCKET,Key=nombre)
+    except (BotoCoreError,ClientError):
+        pass

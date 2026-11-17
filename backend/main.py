@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from db import create_db
-from storage import CARPETA
 from routers import usuarios,imagenes,categorias
 
 URL_S3 = "http://lumio-galeria-uide.s3-website-us-east-1.amazonaws.com"
@@ -30,4 +28,3 @@ app.include_router(usuarios.router,prefix=api_prefix)
 app.include_router(imagenes.router,prefix=api_prefix)
 app.include_router(categorias.router,prefix=api_prefix)
 
-app.mount("/uploads",StaticFiles(directory=CARPETA),name="uploads")

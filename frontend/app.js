@@ -32,7 +32,7 @@ function crearTarjeta(imagen) {
     enlace.className = "card";
     enlace.href = "detalle.html?id=" + imagen.id;
     foto.className = "card__img";
-    foto.src = API + imagen.url;
+    foto.src = imagen.url;
     foto.alt = imagen.titulo;
     titulo.className = "card__title";
     titulo.textContent = imagen.titulo;

@@ -3,7 +3,7 @@ from sqlmodel import Session,select
 from db import get_session
 from models import Usuario,Imagen
 from auth import login,encriptar
-from schemas.usuario import UsuarioCrear,UsuarioActualizar,UsuarioLogin,UsuarioLeer
+from schemas.usuario import UsuarioCrear,UsuarioActualizar,UsuarioLogin,UsuarioLeer,UsuarioRegistro
 
 router=APIRouter(prefix="/usuarios",tags=["usuarios"])
 
@@ -59,3 +59,14 @@ def delete_usuario(usuario_id:int,session:Session=Depends(get_session)):
 @router.post("/login",response_model=UsuarioLeer)
 def login_usuario(data:UsuarioLogin,session:Session=Depends(get_session)):
     return login(data.correo,data.contrasena,session)
+
+@router.post("/registro",response_model=UsuarioLeer,status_code=status.HTTP_201_CREATED)
+def registro_usuario(data:UsuarioRegistro,session:Session=Depends(get_session)):
+    existe=session.exec(select(Usuario).where(Usuario.correo==data.correo)).first()
+    if existe:
+        raise HTTPException(status_code=400,detail="El correo ya está registrado")
+    usuario=Usuario(nombre=data.nombre,correo=data.correo,contrasena=encriptar(data.contrasena),rol="Usuario",estado="Activo")
+    session.add(usuario)
+    session.commit()
+    session.refresh(usuario)
+    return usuario

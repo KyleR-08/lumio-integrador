@@ -21,6 +21,7 @@ class Imagen(SQLModel,table=True):
     id:Optional[int]=Field(default=None,primary_key=True)
     titulo:str
     nombre_archivo:str
+    url:str
     descripcion:str
     fecha_registro:datetime=Field(default_factory=lambda:datetime.now(timezone.utc))
     categoria_id:int=Field(foreign_key="categoria.id")
