@@ -113,3 +113,10 @@ Las fotos no se guardan en el servidor. El backend las sube a un segundo bucket 
 1. Copiar `backend/.env.example` a `backend/.env` y completar `AWS_ACCESS_KEY_ID` y `AWS_SECRET_ACCESS_KEY` de un usuario IAM que solo tenga permiso `s3:PutObject` y `s3:DeleteObject` sobre `lumio-imagenes-uide/*`.
 2. El archivo `.env` está en `.gitignore`: las claves no se suben a GitHub.
 3. Instalar dependencias con `pip install -r requirements.txt` (incluye `boto3` y `python-dotenv`).
+
+### Carpetas por categoría y control de versiones
+
+- Cada foto se guarda dentro de una carpeta con el nombre de su categoría en minúsculas, por ejemplo `arte/<id>.jpg` o `viajes/<id>.jpg`. El link guardado en la base incluye esa carpeta.
+- En Properties de ambos buckets, Bucket Versioning está en Enabled. Al reemplazar un archivo, S3 conserva la versión anterior (se ve con Show versions en la pestaña Objects).
+- En el bucket del sitio, Static website hosting usa `index.html` como documento de índice y `error.html` como documento de error.
+

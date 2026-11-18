@@ -43,11 +43,12 @@ def get_imagen(imagen_id:int,session:Session=Depends(get_session)):
 
 @router.post("/",response_model=ImagenLeer,status_code=status.HTTP_201_CREATED)
 def create_imagen(archivo:UploadFile=File(...),titulo:str=Form(...),descripcion:str=Form(""),categoria_id:int=Form(...),usuario_id:int=Form(...),session:Session=Depends(get_session)):
-    if not session.get(Categoria,categoria_id):
+    categoria=session.get(Categoria,categoria_id)
+    if not categoria:
         raise HTTPException(status_code=404,detail="Categoría no encontrada")
     if not session.get(Usuario,usuario_id):
         raise HTTPException(status_code=404,detail="Usuario no encontrado")
-    nombre_archivo,url=guardar_archivo(archivo)
+    nombre_archivo,url=guardar_archivo(archivo,categoria.nombre)
     imagen=Imagen(titulo=titulo,nombre_archivo=nombre_archivo,url=url,descripcion=descripcion,categoria_id=categoria_id,usuario_id=usuario_id)
     session.add(imagen)
     session.commit()

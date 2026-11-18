@@ -1,5 +1,6 @@
 import os
 import uuid
+from urllib.parse import quote
 import boto3
 from botocore.exceptions import BotoCoreError,ClientError
 from dotenv import load_dotenv
@@ -14,18 +15,19 @@ MAXIMO=10*1024*1024
 
 s3=boto3.client("s3",region_name=REGION)
 
-def guardar_archivo(archivo:UploadFile):
+def guardar_archivo(archivo:UploadFile,carpeta:str):
     if archivo.content_type not in TIPOS:
         raise HTTPException(status_code=400,detail="Solo se permiten imágenes JPG, PNG o WEBP")
     contenido=archivo.file.read()
     if len(contenido)>MAXIMO:
         raise HTTPException(status_code=400,detail="La imagen supera los 10 MB")
-    nombre=uuid.uuid4().hex+TIPOS[archivo.content_type]
+    carpeta=carpeta.strip().lower().replace(" ","-")
+    nombre=carpeta+"/"+uuid.uuid4().hex+TIPOS[archivo.content_type]
     try:
         s3.put_object(Bucket=BUCKET,Key=nombre,Body=contenido,ContentType=archivo.content_type)
     except (BotoCoreError,ClientError):
         raise HTTPException(status_code=502,detail="No se pudo subir la imagen al bucket de S3")
-    url="https://"+BUCKET+".s3."+REGION+".amazonaws.com/"+nombre
+    url="https://"+BUCKET+".s3."+REGION+".amazonaws.com/"+quote(nombre)
     return nombre,url
 
 def borrar_archivo(nombre:str):
