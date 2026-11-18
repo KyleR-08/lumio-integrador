@@ -409,12 +409,12 @@ tbody tr:hover {
 
 .brand__logo {
     display: block;
-    height: 3.2rem;
+    height: 4rem;
     width: auto;
 }
 
 .brand--light .brand__logo {
-    height: 5.5rem;
+    height: 9rem;
 }
 
 .brand--light {
