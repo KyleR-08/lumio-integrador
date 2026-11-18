@@ -1,10 +1,12 @@
 :root {
-    --negro: #111111;
-    --crema: #fffdf8;
-    --papel: #f5f3ed;
-    --linea: #d9d4c7;
-    --dorado: #c6a15b;
-    --dorado-claro: #e3c780;
+    --negro: #910048;
+    --texto: #1a1a1a;
+    --azul: #002d72;
+    --crema: #ffffff;
+    --papel: #f4f4f4;
+    --linea: #dcdcdc;
+    --dorado: #EAAA00;
+    --dorado-claro: #f5cc66;
     --gris: #6b6b6b;
 }
 
@@ -15,7 +17,7 @@
 body {
     margin: 0;
     font-family: "Inter", Arial, sans-serif;
-    color: var(--negro);
+    color: var(--texto);
     background: var(--papel);
 }
 
@@ -403,6 +405,16 @@ tbody tr:hover {
     padding: 2rem 1.5rem;
     color: var(--crema);
     background: var(--negro);
+}
+
+.brand__logo {
+    display: block;
+    height: 3.2rem;
+    width: auto;
+}
+
+.brand--light .brand__logo {
+    height: 5.5rem;
 }
 
 .brand--light {
