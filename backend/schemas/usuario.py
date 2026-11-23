@@ -30,3 +30,6 @@ class UsuarioLeer(SQLModel):
     correo:str
     rol:str
     estado:str
+
+class UsuarioSesion(UsuarioLeer):
+    token:str

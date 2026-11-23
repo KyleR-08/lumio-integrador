@@ -120,3 +120,16 @@ Las fotos no se guardan en el servidor. El backend las sube a un segundo bucket 
 - En Properties de ambos buckets, Bucket Versioning está en Enabled. Al reemplazar un archivo, S3 conserva la versión anterior (se ve con Show versions en la pestaña Objects).
 - En el bucket del sitio, Static website hosting usa `index.html` como documento de índice y `error.html` como documento de error.
 
+
+## Seguridad (Fase 3 del Proyecto Integrador)
+
+Controles aplicados en el backend:
+
+- Contraseñas con scrypt y sal por usuario. Las cuentas con el hash anterior (SHA-256 sin sal) se migran al iniciar sesión. Mínimo de 8 caracteres en cuentas nuevas.
+- Login con mensaje genérico, tiempo de cálculo parejo y bloqueo de 15 minutos tras 5 intentos fallidos por correo.
+- Token de sesión firmado con vencimiento de 8 horas. Todas las rutas, salvo login y registro, exigen el encabezado Authorization: Bearer. Definir LUMIO_SECRET en .env para que los tokens sigan válidos al reiniciar.
+- Permisos validados en el servidor: usuarios, categorías y auditoría solo para Administrador; cada usuario modifica o elimina solo sus imágenes y su propio perfil.
+- Validación del contenido real de las imágenes (JPG, PNG o WEBP por firma de bytes) y límite de 10 MB.
+- Registro de auditoría de la aplicación en la tabla eventoauditoria (GET /api/auditoria/, solo Administrador). No sustituye a AWS CloudTrail.
+
+Pruebas automáticas: python pruebas/prueba_fase3.py

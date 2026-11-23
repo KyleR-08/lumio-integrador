@@ -14,6 +14,24 @@ if (!ES_ADMIN) {
     }
 }
 
+// CS-04: toda petición a la API lleva el token de sesión; el servidor decide los permisos.
+// Si el servidor responde 401 (sesión vencida o inválida), se cierra la sesión local.
+const fetchOriginal = window.fetch.bind(window);
+window.fetch = function (url, opciones) {
+    opciones = opciones || {};
+    const haciaApi = typeof url === "string" && url.indexOf(API) === 0;
+    if (haciaApi && usuario && usuario.token) {
+        opciones.headers = Object.assign({}, opciones.headers, { Authorization: "Bearer " + usuario.token });
+    }
+    return fetchOriginal(url, opciones).then(function (respuesta) {
+        if (haciaApi && respuesta.status === 401 && url.indexOf("/api/usuarios/login") === -1 && usuario) {
+            localStorage.removeItem("usuario");
+            window.location.replace("index.html");
+        }
+        return respuesta;
+    });
+};
+
 function iniciales(nombre) {
     const partes = nombre.split(" ");
     let letras = partes[0][0];

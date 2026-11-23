@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from db import create_db
-from routers import usuarios,imagenes,categorias
+from routers import usuarios,imagenes,categorias,auditoria
 
 URL_S3 = "http://lumio-galeria-uide.s3-website-us-east-1.amazonaws.com"
 
@@ -27,4 +27,5 @@ api_prefix="/api"
 app.include_router(usuarios.router,prefix=api_prefix)
 app.include_router(imagenes.router,prefix=api_prefix)
 app.include_router(categorias.router,prefix=api_prefix)
+app.include_router(auditoria.router,prefix=api_prefix)
 

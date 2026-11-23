@@ -28,3 +28,15 @@ class Imagen(SQLModel,table=True):
     usuario_id:int=Field(foreign_key="usuario.id")
     categoria:Optional[Categoria]=Relationship(back_populates="imagenes")
     usuario:Optional[Usuario]=Relationship(back_populates="imagenes")
+
+
+class EventoAuditoria(SQLModel,table=True):
+    id:Optional[int]=Field(default=None,primary_key=True)
+    fecha_hora:datetime=Field(default_factory=lambda:datetime.now(timezone.utc),index=True)
+    usuario_id:Optional[int]=None
+    correo:str=""
+    accion:str
+    resultado:str
+    recurso:str=""
+    ip:str=""
+    detalle:str=""
